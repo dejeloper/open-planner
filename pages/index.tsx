@@ -4,7 +4,7 @@ import { Layouts } from "../components/layouts";
 
 const HomePage: NextPage = () => {
   return (
-    <Layouts title="Open Planner - Inicio">
+    <Layouts title="Open Planner">
       <Typography variant="h1" color="primary">
         Hola Mundo
       </Typography>
