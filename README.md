@@ -25,5 +25,5 @@ Renombrar el archivo **.env.template** a **.env**
 Llamar por (GET):
 
 ```
-http://localhost:3000/api/v1/seed
+http://localhost:3000/api/seed
 ```
