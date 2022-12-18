@@ -1,5 +1,5 @@
 services:
-  entriesDB:
+  entriesdb:
     image: mongo:5.0.0
     container_name: entries-database
     ports:
