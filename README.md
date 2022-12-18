@@ -1,6 +1,8 @@
 # Next.js Open Planner
 
-Para correr localmente, se requiere la base de datos:
+_Para correr localmente_
+
+### Crear contenedor de base de datos:
 
 ```
 docker-compose up -d
@@ -13,3 +15,7 @@ Mongo DB URL Local:
 ```
 mongodb://localhost:27017/entriesdb
 ```
+
+### Configurar las variables de entorno
+
+Renombrar el archivo **.env.template** a **.env**
