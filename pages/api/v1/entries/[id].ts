@@ -17,12 +17,30 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
   }
 
   switch (req.method) {
+    case 'GET':
+      return getEntry(req, res)
+
     case 'PUT':
       return updateEntry(req, res)
 
     default:
       return res.status(400).json({ message: 'Endpoind no existe' })
   }
+}
+
+const getEntry = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  const { id } = req.query;
+
+  await db.connect();
+
+  const entryInDB = await Entry.findById(id);
+  await db.disconnect();
+
+  if (!entryInDB) {
+    return res.status(400).json({ message: 'No hay Tarea con ese Id: ' + id })
+  }
+
+  return res.status(200).json(entryInDB);
 }
 
 const updateEntry = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
