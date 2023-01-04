@@ -1,25 +1,28 @@
-import { ChangeEvent, useState, useMemo, FC } from 'react';
+import { ChangeEvent, useState, useMemo, useContext, FC } from 'react';
 import { GetServerSideProps } from 'next'
 import { capitalize, Grid, Card, CardHeader, CardActions, CardContent, TextField, Button, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup, IconButton } from '@mui/material';
 
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+
 import { Layouts } from "../../components/layouts"
-import { EntryStatus } from '../../interfaces';
-import { isValidObjectId } from 'mongoose';
+import { Entry, EntryStatus } from '../../interfaces';
+import { dbEntries } from '../../database';
+import { EntriesContext } from '../../context/entries';
+import { dateFunctions } from '../../utils';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 
-
 interface Props {
-  // id: string;
+  entry: Entry
 }
 
+export const EntryPage: FC<Props> = ({ entry }) => {
 
-export const EntryPage: FC = (props) => {
+  const { updateEntry } = useContext(EntriesContext);
 
-  const [inputValue, setInputValue] = useState('')
-  const [status, setStatus] = useState<EntryStatus>('pending')
+  const [inputValue, setInputValue] = useState(entry.description)
+  const [status, setStatus] = useState<EntryStatus>(entry.status)
   const [touched, setTouched] = useState(false)
 
   const isNotValid = useMemo(() => inputValue.length <= 0 && touched, [inputValue, touched])
@@ -33,11 +36,19 @@ export const EntryPage: FC = (props) => {
   }
 
   const onSave = () => {
-    console.log({ inputValue, status });
+    if (inputValue.trim().length === 0) return;
+
+    const updatedEntry: Entry = {
+      ...entry,
+      status,
+      description: inputValue
+    }
+
+    updateEntry(updatedEntry, true);
   }
 
   return (
-    <Layouts title="... .">
+    <Layouts title={inputValue.substring(0, 20) + "..."}>
       <Grid
         container
         justifyContent="center"
@@ -45,7 +56,7 @@ export const EntryPage: FC = (props) => {
       >
         <Grid item xs={12} sm={8} md={6}>
           <Card>
-            <CardHeader title={`Tarea: ${inputValue}`} subheader={`Creada hace ... minutos`} />
+            <CardHeader title={`Tarea`} subheader={`Creada ${dateFunctions.getFormatDistanceToNow(entry.createAt)}`} />
             <CardContent>
               <TextField
                 sx={{ marginTop: 2, marginBottom: 1 }}
@@ -118,8 +129,9 @@ export const EntryPage: FC = (props) => {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const { id } = params as { id: string };
+  const entry = await dbEntries.getEntryById(id);
 
-  if (!isValidObjectId(id)) {
+  if (!entry) {
     return {
       redirect: {
         destination: '/',
@@ -130,7 +142,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   return {
     props: {
-      id
+      entry
     }
   }
 }
