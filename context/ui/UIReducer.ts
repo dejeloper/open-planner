@@ -7,7 +7,7 @@ type UIActionType =
     | { type: '[UI] - Start Dragging' }
     | { type: '[UI] - End Dragging' }
 
-export const uiReducer = (state: UIState, action: any): UIState => {
+export const uiReducer = (state: UIState, action: UIActionType): UIState => {
 
     switch (action.type) {
         case '[UI] - Open Sidebar':
