@@ -51,6 +51,24 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
     }
   }
 
+  const deleteEntry = async ({ _id }: Entry) => {
+    try {
+      const { data } = await entriesApi.delete<Entry>(`/entries/${_id}`);
+      dispatch({ type: '[Entry] - Updated-Entry', payload: data });
+
+      enqueueSnackbar('Tarea Eliminada', {
+        variant: 'success',
+        autoHideDuration: 1500,
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const refreshEntries = async () => {
     const { data } = await entriesApi.get<Entry[]>('/entries');
     dispatch({ type: '[Entry] - Initial-Entry', payload: data })
@@ -68,6 +86,7 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
         // Métodos
         addNewEntry,
         updateEntry,
+        deleteEntry,
       }}>
       {children}
     </EntriesContext.Provider>
